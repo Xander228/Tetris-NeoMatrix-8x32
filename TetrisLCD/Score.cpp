@@ -2,7 +2,7 @@
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
 
-class points {
+class Score {
 public:
 unsigned short lines = 0;
 unsigned short level = 1;
@@ -10,7 +10,7 @@ unsigned short level = 1;
 
 
 
-points(void){
+Score(void){
 
 };
 unsigned long score = 0;

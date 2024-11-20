@@ -1,38 +1,38 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
-#include "debounce.cpp"
+#include "Button.cpp"
 
 
-class userInput{
+class UserInput{
+public:
+Button buttonLeft;
+Button buttonDown;
+Button buttonRight;
+Button buttonUp;
+
 private:
-debounce buttonLeft;
-debounce buttonDown;
-debounce buttonRight;
-debounce buttonUp;
-debounce pause;
 bool rot = 0;
 bool drop = 0;
 bool paused = 0;
 int horz = 0;
 
 public:
-  userInput(void) : buttonLeft(2), buttonDown(3), buttonRight(4), buttonUp(5), pause(7){
+  UserInput(void) : buttonLeft(19), buttonDown(21), buttonRight(18), buttonUp(20){
   };
 
   void begin(void){
-    buttonLeft.pressed();
-    buttonRight.pressed();
-    buttonUp.pressed();
-    buttonDown.held();
-    pause.held();    
+    buttonLeft.begin();
+    buttonRight.begin();
+    buttonUp.begin();
+    buttonDown.begin();
   }
 
   bool input(void){
-    if (buttonLeft.pressed()) return 1;
-    if (buttonRight.pressed()) return 1;
-    if (buttonUp.pressed()) return 1;
-    if (buttonDown.held()) return 1;
+    if (buttonLeft.wasPressed()) return 1;
+    if (buttonRight.wasPressed()) return 1;
+    if (buttonUp.wasPressed()) return 1;
+    if (buttonDown.isHeld()) return 1;
     return 0;
   }
   void update(void) {
@@ -40,11 +40,11 @@ public:
     horz = 0;
     drop = 0;
     paused = 0;
-    if (buttonLeft.pressed()) horz--;
-    if (buttonRight.pressed()) horz++;
-    if (buttonUp.pressed()) rot = 1;
-    if (buttonDown.held()) drop = 1;
-    if (pause.pressed()) paused = 1;
+    if (buttonLeft.wasPressed()) horz--;
+    if (buttonRight.wasPressed()) horz++;
+    if (buttonUp.wasPressed()) rot = 1;
+    if (buttonDown.isHeld()) drop = 1;
+    //if (pause.wasPressed()) paused = 1;
   }
 
   int horizontal(void){

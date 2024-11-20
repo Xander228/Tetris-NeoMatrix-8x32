@@ -3,7 +3,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <Arduino.h>
 
-class pieceQueue {
+class PieceQueue {
 private:
   uint8_t bagIndex = 0;
   uint8_t currentPiece;
@@ -22,7 +22,7 @@ private:
 public:
   uint8_t pieceBag[7];
 
-  pieceQueue(void){};
+  PieceQueue(void){};
 
   void begin(void) {
     for (uint8_t i = 0; i < 7; i++) pieceBag[i] = i;

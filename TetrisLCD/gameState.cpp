@@ -3,11 +3,11 @@
 #include <Adafruit_NeoPixel.h>
 #ifndef TETROMINOS_H
 #define TETROMINOS_H
-#include "tetrominos.cpp"
+#include "Tetrominos.cpp"
 #endif
 
 
-class gameState {
+class GameState {
 private:
   uint8_t pieceNum;
   int cursorX, cursorY;
@@ -18,7 +18,7 @@ private:
 public:
   uint8_t board[32][8];
 
-  gameState(void){};
+  GameState(void){};
 
   void resetPiece(uint8_t pieceNum, int pieceX, int pieceY, uint8_t pieceRot) {
     this->pieceNum = pieceNum;
