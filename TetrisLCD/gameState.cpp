@@ -31,42 +31,47 @@ public:
 
 
   void movePiece(int changeX, bool changeRot) {
-    cursorX += changeX;
-    if (changeRot) pieceRot++;
-    bool done = 0;
-    while (done == 0) {
-      if (pieceRot > 3) pieceRot = 0;
-      for (uint8_t Y = 0; Y < 4; Y++) {
-        for (uint8_t X = 0; X < 4; X++) {
-          if (pgm_read_byte(&tetrominos[pieceNum][Y][pieceRot][X]) == 0) continue;
-          if (cursorX + X < 0) {
-            cursorX++;
-            continue;
-          }
-          if (cursorX + X > 7) {
-            cursorX--;
-            continue;
-          }
-          done = 1;
-        }
-      }
-    }
+    int desX = cursorX + changeX;
+    uint8_t desRot = pieceRot;
+    if (changeRot) desRot++;
+    if (desRot > 3) desRot = 0;
+
+    if(isOverlapped(desX, cursorY, desRot, board)) return;
+    if(isOutOfBounds(desX, cursorY, desRot)) return;
+
+    
+    cursorX = desX;
     pieceX = cursorX + 2;
+    pieceRot = desRot;
+
+    // cursorX += changeX;
+    // if (changeRot) pieceRot++;
+    // if (pieceRot > 3) pieceRot = 0;
+    // bool done = 0;
+    // while (done == 0) {
+    //   for (uint8_t Y = 0; Y < 4; Y++) {
+    //     for (uint8_t X = 0; X < 4; X++) {
+    //       if (pgm_read_byte(&tetrominos[pieceNum][Y][pieceRot][X]) == 0) continue;
+    //       if (cursorX + X < 0) {
+    //         cursorX++;
+    //         continue;
+    //       }
+    //       if (cursorX + X > 7) {
+    //         cursorX--;
+    //         continue;
+    //       }
+    //       done = 1;
+    //     }
+    //   }
+    // }
+    // pieceX = cursorX + 2;
   }
 
   bool dropPiece(void) {
     bool above = 0;
     if (pieceRot > 3) pieceRot = 0;
-    for (uint8_t Y = 0; Y < 4; Y++) {
-      for (uint8_t X = 0; X < 4; X++) {
-        if (pgm_read_byte(&tetrominos[pieceNum][Y][pieceRot][X]) == 0) continue;
-        if (board[cursorY + Y + 1][cursorX + X] != 0 || cursorY + Y > 30) {
-          above = 1;
-          break;
-        }
-      }
-    }
-    if (above == 1) {
+
+    if (isOverlapped(cursorX, cursorY + 1, pieceRot, board) || isOutOfBounds(cursorX, cursorY + 1, pieceRot)) {
       for (uint8_t Y = 0; Y < 4; Y++) {
         for (uint8_t X = 0; X < 4; X++) {
           if (pgm_read_byte(&tetrominos[pieceNum][Y][pieceRot][X]) == 0) continue;
@@ -80,6 +85,36 @@ public:
       return 0;
     }
   }
+
+  bool isOverlapped(int x, int y, uint8_t rotation, uint8_t board[32][8]) {
+    for (uint8_t Y = 0; Y < 4; Y++) {
+      for (uint8_t X = 0; X < 4; X++) {
+        //ignores tile if no mino occupies it
+        if (pgm_read_byte(&tetrominos[pieceNum][Y][rotation][X]) == 0) continue;
+        
+        //if a mino exists, return true if it is touching another mino on the board
+        if (board[y + Y][x + X] != 0) return true;
+      }
+    }
+    //return false if all minos pass the test
+      return false;
+  }
+    
+  bool isOutOfBounds(int x, int y, uint8_t rotation) {
+    for (uint8_t Y = 0; Y < 4; Y++) {
+      for (uint8_t X = 0; X < 4; X++) {
+        //ignores tile if no mino occupies it
+        if (pgm_read_byte(&tetrominos[pieceNum][Y][rotation][X]) == 0) continue;
+        //if a mino exists, return true if it is outside the left right or bottom bounds
+        if (x + X < 0 || 
+            x + X > 7 || 
+            y + Y > 31) return true;
+      }
+    }
+    //return false if all minos pass the test
+    return false;
+  }
+
 
   int piecePosX(void) {
     return pieceX;
@@ -104,6 +139,16 @@ public:
   uint8_t pieceType(void) {
     return pieceNum;
   }
+
+
+  bool lockedAboveBoard(void) {
+        for (int indexX = 0; indexX < 8; indexX++) {
+            if (board[7][indexX] != 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
   void identifyRow(void) {

@@ -8,12 +8,13 @@
 #include "PieceQueue.cpp"
 #include "Score.cpp"
 
-static UserInput user; //creates user object to handle user input
+UserInput user; //creates user object to handle user input
 GameState gameState; //creates gameState object to handle the state of the game
 PieceQueue queue; //creates queue object to generate pieces
 Display display; //creates display object to handle the neoMatrix and LCD displays
 Score score; //creates a score object to store and calulate score, lines, and level
-
+volatile bool unpause; //lets the ISR know to unpause
+volatile bool paused; //stores whether the game is currently paused
 
 
 void setup() {
@@ -31,11 +32,27 @@ void setup() {
   }
   queue.begin(); //setup the piece queue
   gameState.resetPiece(queue.current(), 4, 7, 0); //set the current piece in hand to the first piece in the queue
+
+  pinMode(2, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(2), pause, FALLING);
 }
 
-void handleButtonPress(void){
-  //user.handleInput();
+void pause(void){
+  delayMicroseconds(10000);
+  if(paused) {
+    if(!digitalRead(2)) unpause = true;
+    return;
+  }
+  paused = true;
+  while(!unpause){
+    Serial.println("paused");
+    display.pause();
+  }
+  display.countdown();
+  paused = false;
+  unpause = false;
 }
+
 
 unsigned long dropLast; //the last successful drop
 int dropTime; //time it should take for the piece to drop once
@@ -46,7 +63,7 @@ void loop() {
   user.update(); //update user values with current button states
 
   //if the display is not paused
-  if (display.paused == 0) {
+  //if (display.paused == 0) {
     gameState.movePiece(user.horizontal(), user.rotation()); //move piece based on user input
 
     //if the user is dropping
@@ -84,8 +101,8 @@ void loop() {
     display.next(queue.next()); //display the next piece in queue in the queue area
     display.show(); //show the display
     score.countLines(gameState.clearLine()); //attempt to clear line from the board 
-  }
+  //}
 
   //check if the user is pausing
-  display.checkPause(user.pausing(), gameState.board, gameState.pieceType()); 
+  //display.checkPause(user.pausing(), gameState.board, gameState.pieceType()); 
 }

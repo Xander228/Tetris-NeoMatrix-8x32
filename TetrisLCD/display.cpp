@@ -211,8 +211,8 @@ public:
   }
 
   bool paused = 0;
-  void checkPause(bool button, uint8_t game[32][8], uint8_t pieceNum) {
-    if (button == 1 && paused == 0) {
+  void pause(void){//bool button, uint8_t game[32][8], uint8_t pieceNum) {
+    //if (button == 1 && paused == 0) {
       matrix.setTextColor(colors[8]);
       matrix.clear();
       matrix.setCursor(1, 0);
@@ -228,27 +228,37 @@ public:
       matrix.show();
       paused = 1;
       return;
-    }
+    //}
 
-    if (button == 1 && paused == 1) {
-      for (int x = 8; x > -36; x--) {
-        matrix.clear();
-        matrix.setCursor(x, 12);
-        matrix.print("3 2 1");
-        matrix.show();
-        delay(83);
-      }
-      next(pieceNum);
-      for (uint8_t Y = 31; Y > 8; Y--) {
-        for (uint8_t X = 0; X < 8; X++) {
-          if (colors[game[Y][X]] == 0) continue;
-          matrix.drawPixel(X, Y, colors[game[Y][X]]);
-        }
-        matrix.show();
-        delay(30);
-      }
-      paused = 0;
-      return;
+    // if (button == 1 && paused == 1) {
+    //   for (int x = 8; x > -36; x--) {
+    //     matrix.clear();
+    //     matrix.setCursor(x, 12);
+    //     matrix.print("3 2 1");
+    //     matrix.show();
+    //     delay(83);
+    //   }
+    //   next(pieceNum);
+    //   for (uint8_t Y = 31; Y > 8; Y--) {
+    //     for (uint8_t X = 0; X < 8; X++) {
+    //       if (colors[game[Y][X]] == 0) continue;
+    //       matrix.drawPixel(X, Y, colors[game[Y][X]]);
+    //     }
+    //     matrix.show();
+    //     delay(30);
+    //   }
+    //   paused = 0;
+    //   return;
+    // }
+  }
+
+  void countdown(void){
+    for (int x = 8; x > -36; x--) {
+      matrix.clear();
+      matrix.setCursor(x, 12);
+      matrix.print("3 2 1");
+      matrix.show();
+      delay(83);
     }
   }
 };

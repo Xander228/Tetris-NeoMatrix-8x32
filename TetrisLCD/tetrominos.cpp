@@ -2,6 +2,10 @@
 #include <Adafruit_NeoMatrix.h>
 #include <Adafruit_NeoPixel.h>
 
+//create a map to define the tetrominos, the array stores 7 different piece types
+//each piece type is an array of 4 states the piece can be rotated
+//each rotation is composed of a 2d array that stores each cell of the piece
+//each cell is difined by either a 0 to represent empty or a number that represents the piece's color
 const PROGMEM uint8_t tetrominos[7][4][4][4] = {
       {    
         { {0,0,0,0}, {0,0,1,0}, {0,0,0,0}, {0,1,0,0} },
@@ -48,6 +52,8 @@ const PROGMEM uint8_t tetrominos[7][4][4][4] = {
 
 };
 
+
+//bitmap representation of the Tetris logo
 const int8_t PROGMEM logo[13][19] = {
   {1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1},
   {1 ,3 ,3 ,3 ,5 ,5 ,5 ,7 ,7 ,7 ,9 ,9 ,2 ,2 ,11,13,13,13,1},
