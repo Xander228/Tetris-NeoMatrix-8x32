@@ -39,32 +39,9 @@ public:
     if(isOverlapped(desX, cursorY, desRot, board)) return;
     if(isOutOfBounds(desX, cursorY, desRot)) return;
 
-    
     cursorX = desX;
     pieceX = cursorX + 2;
     pieceRot = desRot;
-
-    // cursorX += changeX;
-    // if (changeRot) pieceRot++;
-    // if (pieceRot > 3) pieceRot = 0;
-    // bool done = 0;
-    // while (done == 0) {
-    //   for (uint8_t Y = 0; Y < 4; Y++) {
-    //     for (uint8_t X = 0; X < 4; X++) {
-    //       if (pgm_read_byte(&tetrominos[pieceNum][Y][pieceRot][X]) == 0) continue;
-    //       if (cursorX + X < 0) {
-    //         cursorX++;
-    //         continue;
-    //       }
-    //       if (cursorX + X > 7) {
-    //         cursorX--;
-    //         continue;
-    //       }
-    //       done = 1;
-    //     }
-    //   }
-    // }
-    // pieceX = cursorX + 2;
   }
 
   bool dropPiece(void) {
@@ -143,7 +120,7 @@ public:
 
   bool lockedAboveBoard(void) {
         for (int indexX = 0; indexX < 8; indexX++) {
-            if (board[7][indexX] != 0) {
+            if (board[6][indexX] != 0) {
                 return true;
             }
         }

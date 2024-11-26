@@ -14,6 +14,7 @@ private:
   const uint16_t dim = 4; //dim factor
   const int rs = 13, en = 12, d4 = 11, d5 = 10, d6 = 9, d7 = 8; //LCD pins
   int x; //width
+
   Adafruit_NeoMatrix matrix; //create neoMatrix object
   LiquidCrystal lcd; //creat LCD object
 
@@ -28,6 +29,7 @@ private:
     matrix.Color(255, 0, 255),    //purple
     matrix.Color(255, 0, 0),      //red
     matrix.Color(255, 255, 255),  //white
+    
   };
 
   //ghost piece colors
@@ -84,6 +86,7 @@ public:
         matrix.drawPixel(X + pieceX, Y + pieceY, colors[pgm_read_byte(&tetrominos[pieceNum][Y][pieceRotation][X])]);
       }
     }
+    
   }
 
   //display the board
@@ -179,7 +182,7 @@ public:
 
   //wrap the matrix.show method
   void show() {
-    matrix.show(); //show the current matrix buffer
+    if(matrix.canShow()) matrix.show(); //show the current matrix buffer
   }
 
   //display the score on the LCD
@@ -198,67 +201,79 @@ public:
   //display the wait screen
   void idle(void) {
     matrix.clear(); //clear the display
-    matrix.setCursor(x, 0); //
+    matrix.setCursor(x, 0); //set the cursor to the top
+
+    //iterates through the y axis of the piece
     for (uint8_t Y = 0; Y < 13; Y++) {
+      //iterates through the x axis of the piece
       for (uint8_t X = 0; X < 19; X++) {
+        //if the cell is empty, skip it
         if (pgm_read_byte(&logo[Y][X]) == 0) continue;
+
+        //draw the color of the pixel in the logo
         matrix.drawPixel(X + x, Y + 4, colorsLogo[pgm_read_byte(&logo[Y][X])]);
       }
     }
+
+    //decrement x and if x is less than -20, then set x to the width of the matrix
     if (--x < -20) x = matrix.width();
-    matrix.show();
-    delay(100);
+    matrix.show(); //show the screen
+    delay(100); //wait 100 ms
   }
 
-  bool paused = 0;
-  void pause(void){//bool button, uint8_t game[32][8], uint8_t pieceNum) {
-    //if (button == 1 && paused == 0) {
-      matrix.setTextColor(colors[8]);
-      matrix.clear();
-      matrix.setCursor(1, 0);
-      matrix.print("P");
-      matrix.setCursor(1, 6);
-      matrix.print("a");
-      matrix.setCursor(1, 12);
-      matrix.print("u");
-      matrix.setCursor(1, 18);
-      matrix.print("s");
-      matrix.setCursor(1, 24);
-      matrix.print("e");
-      matrix.show();
-      paused = 1;
-      return;
-    //}
 
-    // if (button == 1 && paused == 1) {
-    //   for (int x = 8; x > -36; x--) {
-    //     matrix.clear();
-    //     matrix.setCursor(x, 12);
-    //     matrix.print("3 2 1");
-    //     matrix.show();
-    //     delay(83);
-    //   }
-    //   next(pieceNum);
-    //   for (uint8_t Y = 31; Y > 8; Y--) {
-    //     for (uint8_t X = 0; X < 8; X++) {
-    //       if (colors[game[Y][X]] == 0) continue;
-    //       matrix.drawPixel(X, Y, colors[game[Y][X]]);
-    //     }
-    //     matrix.show();
-    //     delay(30);
-    //   }
-    //   paused = 0;
-    //   return;
-    // }
+  void pause(void){
+      matrix.setTextColor(colors[8]); //set the color to white
+      matrix.clear(); //clear the display
+      matrix.setCursor(1, 0); //set the cursor to the top
+      matrix.print("P"); //draw the letter "P"
+      matrix.setCursor(1, 6); //set the cursor one line below the last
+      matrix.print("a"); //draw the letter "a"
+      matrix.setCursor(1, 12); //set the cursor one line below the last
+      matrix.print("u"); //draw the letter "u"
+      matrix.setCursor(1, 18); //set the cursor one line below the last
+      matrix.print("s"); //draw the letter "s"
+      matrix.setCursor(1, 24); //set the cursor one line below the last
+      matrix.print("e"); //draw the letter "e"
+      matrix.show(); //show the screen
+  }
+
+  void gameOver(void){
+      matrix.setTextColor(colors[8]); //set the color to white
+      matrix.clear(); //clear the display
+      matrix.setCursor(1, 2); //set the cursor to the top
+      matrix.print("G"); //draw the letter "G"
+      matrix.setCursor(1, 9); //set the cursor one line below the last
+      matrix.print("a"); //draw the letter "a"
+      matrix.setCursor(1, 16); //set the cursor one line below the last
+      matrix.print("m"); //draw the letter "m"
+      matrix.setCursor(1, 23); //set the cursor one line below the last
+      matrix.print("e"); //draw the letter "e"
+      matrix.show(); //show the screen
+      delay(3000); //wait 3 seconds
+
+      matrix.clear(); //clear the display
+      matrix.setCursor(1, 2); //set the cursor to the top
+      matrix.print("O"); //draw the letter "O"
+      matrix.setCursor(1, 9); //set the cursor one line below the last
+      matrix.print("v"); //draw the letter "v"
+      matrix.setCursor(1, 16); //set the cursor one line below the last
+      matrix.print("e"); //draw the letter "e"
+      matrix.setCursor(1, 23); //set the cursor one line below the last
+      matrix.print("r"); //draw the letter "r"
+      matrix.show(); //show the screen
+      delay(3000); //wait 3 seconds
   }
 
   void countdown(void){
+
+    //from the edge of the panel to the edge of the last charachter
     for (int x = 8; x > -36; x--) {
-      matrix.clear();
-      matrix.setCursor(x, 12);
-      matrix.print("3 2 1");
-      matrix.show();
-      delay(83);
+      matrix.clear(); //clear the display
+      matrix.setCursor(x, 12); //set the cursor to the middle of the screen
+      matrix.print("3 2 1"); //print the message
+      matrix.show(); //show the screen
+      delay(83); //wait 83 ms
     }
   }
 };
