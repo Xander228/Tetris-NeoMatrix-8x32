@@ -6,57 +6,44 @@
 
 class UserInput{
 public:
-Button buttonLeft;
-Button buttonDown;
-Button buttonRight;
-Button buttonUp;
+Button buttonLeft; //creates a new button object
+Button buttonDown; //creates a new button object
+Button buttonRight; //creates a new button object
+Button buttonUp; //creates a new button object
 
 private:
-bool rot = 0;
-bool drop = 0;
-bool paused = 0;
-int horz = 0;
+bool rot = 0; //creates a boolean to represent the rotation button's state
+bool drop = 0; //creates a boolean to represent the drop button's state
+int horz = 0; //creates a boolean to represent the horizontal button's state
 
 public:
   UserInput(void) : buttonLeft(19), buttonDown(21), buttonRight(18), buttonUp(20){
-  };
+  }; //contruct each button object with the coresponding input pins
 
   void begin(void){
-    buttonLeft.begin();
-    buttonRight.begin();
-    buttonUp.begin();
-    buttonDown.begin();
+    buttonLeft.begin(); //setup left button
+    buttonRight.begin(); //setup right button
+    buttonUp.begin(); //setup up button
+    buttonDown.begin(); //setup down button
   }
 
   bool input(void){
-    if (buttonLeft.wasPressed()) return 1;
-    if (buttonRight.wasPressed()) return 1;
-    if (buttonUp.wasPressed()) return 1;
-    if (buttonDown.isHeld()) return 1;
-    return 0;
+    //return whether any button was pressed
+    return buttonLeft.wasPressed() || buttonRight.wasPressed() || buttonUp.wasPressed() || buttonDown.isHeld();
   }
   void update(void) {
-    rot = 0;
-    horz = 0;
-    drop = 0;
-    paused = 0;
-    if (buttonLeft.wasPressed()) horz--;
-    if (buttonRight.wasPressed()) horz++;
-    if (buttonUp.wasPressed()) rot = 1;
-    if (buttonDown.isHeld()) drop = 1;
-    //if (pause.wasPressed()) paused = 1;
+    rot = buttonUp.wasPressed(); //set rotation button state
+    drop = buttonDown.isHeld(); //set drop button state
+    horz = buttonRight.wasPressed() ? 1 : buttonLeft.wasPressed() ? -1 : 0; //set horizontal button state
   }
 
   int horizontal(void){
-    return horz;
+    return horz; //return the horizontal button state
   }
   bool rotation(void){
-    return rot;
+    return rot; //return the rotation button state
   }
   bool droping(void){
-    return drop;
-  }
-  bool pausing(void){
-    return paused;
+    return drop; //return the dropping button state
   }
 };
